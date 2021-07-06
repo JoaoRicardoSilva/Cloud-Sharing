@@ -1,23 +1,54 @@
 "use strick";
 
-// const askForCommand = () => window.prompt("What is your command?");
+const askForCommand = () => window.prompt("What is your command?");
 
-class User {
-    constructor(email, type) {
-        this.email = email;
-        this.type = type;
+//Cloud
+class Cloud {
+    add() {}
+    upload() {}
+    share() {}
+    minSpace() {}
+    listAll() {}
+    exit() {
+        alert("Exiting...");
+        return;
     }
+    update() {}
+    lastUpdate() {}
+}
+const eddisCloud = new Cloud();
 
-    test() {
-        console.log("Work");
+// Users
+class User {
+    constructor(email) {
+        this.email = email;
     }
 }
 
-class Cloud {}
+class BasicType extends User {
+    memory = 2048;
+    type = "basic";
+}
 
-// let command = askForCommand();
-const r = new User();
+class PremiumType extends User {
+    memory = 5120;
+    type = "premium";
+}
 
-let t = "test";
+const b = new BasicType();
+const p = new PremiumType();
 
-r[t]();
+// PROGRAM START
+let command = askForCommand();
+
+// Put an if here to prevent unknown command
+
+if (!command) {
+    eddisCloud.exit();
+}
+
+while (command.toLowerCase() !== "exit" && command) {
+    command = askForCommand();
+}
+
+eddisCloud.exit();
