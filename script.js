@@ -21,15 +21,25 @@ class PremiumType extends User {
     type = "premium";
 }
 
-const b = new BasicType();
-const p = new PremiumType();
-
 //Cloud
 class Cloud {
     add() {
         const regex = /^ ([a-zA-Z0-9]+) ([a-zA-Z0-9]+)/gi;
-        const group1 = saveCommand[1].match(regex)[1];
-        const group2 = saveCommand[1].match(regex)[2].toLowerCase();
+        const matchRegex = saveCommand[1].match(regex);
+        const email = matchRegex[1];
+        const type = matchRegex[2];
+
+        switch (type) {
+            case "basic":
+                break;
+            case "premium":
+                break;
+
+            default:
+                break;
+        }
+
+        // saveUsers.push();
     }
     upload() {}
     share() {}
@@ -68,6 +78,7 @@ const getCommand = () => {
 const loop = () => {
     if (typeof eddisCloud[saveCommand[0]] === "function") {
         while (saveCommand[0] !== "exit" && saveCommand[0]) {
+            eddisCloud[saveCommand[0]]();
             getCommand();
         }
 
