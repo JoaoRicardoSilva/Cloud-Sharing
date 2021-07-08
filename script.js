@@ -9,7 +9,8 @@ class User {
     constructor(email) {
         this.email = email;
     }
-    files = [];
+    files = {};
+    filesShared = {};
 }
 
 class BasicType extends User {
@@ -20,14 +21,6 @@ class BasicType extends User {
 class PremiumType extends User {
     memory = 5120;
     type = "premium";
-}
-
-// Files
-class File {
-    constructor(name, memory) {
-        this.name = name;
-        this.memory = memory;
-    }
 }
 
 // General functions
@@ -71,15 +64,66 @@ class Cloud {
     upload() {
         const email = saveCommand[1];
         const nameFile = saveCommand[2];
-        const size = saveCommand[3];
+        const size = Number(saveCommand[3]);
         const index = findUserIndex(email);
 
         if (index === undefined) {
             alert("Account does not exist.");
             return;
         }
+
+        if (saveUsers[index].files[nameFile]) {
+            alert("File already exists in the account.");
+            return;
+        }
+
+        if (size - saveUsers[index] < 0) {
+            alert("File size exceeds account capacity.");
+            return;
+        }
+
+        saveUsers[index].files[nameFile] = size;
+
+        saveUsers[index].memory -= size;
     }
-    share() {}
+    share() {
+        const owner = saveCommand[1];
+        const shareUser = saveCommand[2];
+        const fileName = saveCommand[3];
+        const indexUser = findUserIndex(owner);
+        const indexShareUser = findUserIndex(shareUser);
+
+        if (indexUser === undefined || indexShareUser === undefined) {
+            alert("Account does not exist");
+            return;
+        }
+
+        if (!saveUsers[indexUser].files[fileName]) {
+            alert("File does not exist.");
+            return;
+        }
+
+        if (saveUsers[indexUser].type === "basic") {
+            alert("Account does not allow file sharing.");
+            return;
+        }
+
+        if (saveUsers[indexUser].filesShared[fileName]) {
+            alert("File already shared.");
+            return;
+        }
+
+        if (
+            saveUsers[indexShareUser].type === "basic" &&
+            saveUsers[indexShareUser].memory <
+                saveUsers[indexUser][fileName] / 2
+        ) {
+            alert("File size exceeds account capacity.");
+            return;
+        }
+
+        debugger;
+    }
     minSpace() {}
     listAll() {}
     update() {}
