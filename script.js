@@ -32,12 +32,12 @@ class File {
 
 // General functions
 
-const checkEmail = (email) => {
-    const emailExist = saveUsers.filter((x) => x.email === email);
-    if (emailExist[0]) {
-        return true;
+const findUserIndex = (mail) => {
+    for (let i = 0; i < saveUsers.length; i++) {
+        if (saveUsers[i].email === mail) {
+            return i;
+        }
     }
-    return false;
 };
 
 //Cloud
@@ -48,9 +48,9 @@ class Cloud {
 
         let newUser;
 
-        if (checkEmail(email)) {
+        if (typeof findUserIndex(email) === "number") {
             alert("Account already exists.");
-            return
+            return;
         }
 
         switch (type) {
@@ -67,14 +67,17 @@ class Cloud {
 
         saveUsers.push(newUser);
         alert("Account was added.");
-        debugger;
     }
     upload() {
         const email = saveCommand[1];
         const nameFile = saveCommand[2];
         const size = saveCommand[3];
+        const index = findUserIndex(email);
 
-        const 
+        if (index === undefined) {
+            alert("Account does not exist.");
+            return;
+        }
     }
     share() {}
     minSpace() {}
@@ -99,7 +102,6 @@ const getCommand = () => {
     saveCommand = saveCommand.split(" ");
 
     saveCommand[0] = saveCommand[0].toLowerCase();
-
     if (saveCommand[0] === "exit") {
         alert("Exiting...");
         return false;
