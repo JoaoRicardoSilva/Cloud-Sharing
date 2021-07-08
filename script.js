@@ -1,7 +1,7 @@
 "use strick";
 
 // Memory
-let saveCommand = [];
+let saveCommand;
 const saveUsers = [];
 
 // Users
@@ -9,6 +9,7 @@ class User {
     constructor(email) {
         this.email = email;
     }
+    files = [];
 }
 
 class BasicType extends User {
@@ -21,72 +22,92 @@ class PremiumType extends User {
     type = "premium";
 }
 
+// Files
+class File {
+    constructor(name, memory) {
+        this.name = name;
+        this.memory = memory;
+    }
+}
+
+// General functions
+
+const checkEmail = (email) => {
+    const emailExist = saveUsers.filter((x) => x.email === email);
+    if (emailExist[0]) {
+        return true;
+    }
+    return false;
+};
+
 //Cloud
 class Cloud {
     add() {
-        const regex = /^ ([a-zA-Z0-9]+) ([a-zA-Z0-9]+)/gi;
-        const matchRegex = saveCommand[1].match(regex);
-        const email = matchRegex[1];
-        const type = matchRegex[2];
+        const email = saveCommand[1];
+        const type = saveCommand[2].toLowerCase();
+
+        let newUser;
+
+        if (checkEmail(email)) {
+            alert("Account already exists.");
+            return
+        }
 
         switch (type) {
             case "basic":
+                newUser = new BasicType(email);
                 break;
             case "premium":
+                newUser = new PremiumType(email);
                 break;
 
             default:
                 break;
         }
 
-        // saveUsers.push();
+        saveUsers.push(newUser);
+        alert("Account was added.");
+        debugger;
     }
-    upload() {}
+    upload() {
+        const email = saveCommand[1];
+        const nameFile = saveCommand[2];
+        const size = saveCommand[3];
+
+        const 
+    }
     share() {}
     minSpace() {}
     listAll() {}
-    exit() {
-        alert("Exiting...");
-        return;
-    }
     update() {}
     lastUpdate() {}
 }
 const eddisCloud = new Cloud();
 
-// PROGRAM START
+// PROGRAM START HERE
 const askForCommand = () => window.prompt("What is your command?");
 
 const getCommand = () => {
-    let regex = /^([a-zA-Z]+)| ([a-zA-Z0-9\º+\.+\ +]+)/gi;
-    let call = askForCommand();
+    saveCommand = askForCommand();
 
     // If User press "cancel"
-    if (call === null) {
-        saveCommand[0] = undefined;
-        saveCommand[1] = undefined;
+    if (!saveCommand) {
+        alert("Exiting...");
         return false;
     }
 
-    // Save the command
-    saveCommand[0] = call.match(regex)[0].toLowerCase();
-    // Save the rest of the information
-    saveCommand[1] = call.match(regex)[1];
+    saveCommand = saveCommand.split(" ");
+
+    saveCommand[0] = saveCommand[0].toLowerCase();
+
+    if (saveCommand[0] === "exit") {
+        alert("Exiting...");
+        return false;
+    }
+
     return true;
 };
 
-const loop = () => {
-    if (typeof eddisCloud[saveCommand[0]] === "function") {
-        while (saveCommand[0] !== "exit" && saveCommand[0]) {
-            eddisCloud[saveCommand[0]]();
-            getCommand();
-        }
-
-        eddisCloud.exit();
-    } else {
-        eddisCloud.exit();
-    }
-};
-
-// If User press "cancel" on first promp
-getCommand() ? loop() : eddisCloud.exit();
+while (getCommand()) {
+    eddisCloud[saveCommand[0]]();
+}
