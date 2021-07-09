@@ -8,19 +8,25 @@ const saveUsers = [];
 class User {
     constructor(email) {
         this.email = email;
+        this.files = {};
+        this.filesShared = {};
     }
-    files = {};
-    filesShared = {};
 }
 
 class BasicType extends User {
-    memory = 2048;
-    type = "basic";
+    constructor() {
+        super();
+        this.memory = 2048;
+        this.type = "basic";
+    }
 }
 
 class PremiumType extends User {
-    memory = 5120;
-    type = "premium";
+    constructor() {
+        super();
+        this.memory = 5120;
+        this.type = "premium";
+    }
 }
 
 // General functions
@@ -116,18 +122,47 @@ class Cloud {
         if (
             saveUsers[indexShareUser].type === "basic" &&
             saveUsers[indexShareUser].memory <
-                saveUsers[indexUser][fileName] / 2
+                saveUsers[indexUser].files[fileName] / 2
         ) {
             alert("File size exceeds account capacity.");
             return;
         }
 
+        saveUsers[indexShareUser].filesShared[shareUser] = {};
+        saveUsers[indexShareUser].filesShared[shareUser][fileName] =
+            saveUsers[indexUser].files[fileName];
+
+        if (saveUsers[indexShareUser].type === "basic") {
+            saveUsers[indexShareUser].memory -=
+                saveUsers[indexUser].files[fileName] / 2;
+        }
+    }
+    minspace() {
+        if (saveUsers[0] === undefined) {
+            alert("No accounts.");
+            return;
+        }
+
+        let space = saveUsers[0].memory;
+        let account = saveUsers[0].email;
+
+        saveUsers.map((i) => {
+            if (i.memory < space) {
+                space = i.memory;
+                account = i.email;
+            }
+        });
         debugger;
     }
-    minSpace() {}
-    listAll() {}
-    update() {}
-    lastUpdate() {}
+    listall() {
+        alert("Test");
+    }
+    update() {
+        alert("Test");
+    }
+    lastupdate() {
+        alert("Test");
+    }
 }
 const eddisCloud = new Cloud();
 
