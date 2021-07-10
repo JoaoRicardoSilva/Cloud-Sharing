@@ -88,12 +88,11 @@ class Cloud {
             return;
         }
 
-        if (size - saveUsers[index] < 0) {
+        if (saveUsers[index].memory - size < 0) {
             alert("File size exceeds account capacity.");
             alert("");
             return;
         }
-
         saveUsers[index].files[nameFile] = size;
 
         saveUsers[index].memory -= size;
@@ -109,7 +108,7 @@ class Cloud {
         const indexShareUser = findUserIndex(shareUser);
 
         if (indexUser === undefined || indexShareUser === undefined) {
-            alert("Account does not exist");
+            alert("Account does not exist.");
             alert("");
             return;
         }
@@ -120,7 +119,7 @@ class Cloud {
             return;
         }
 
-        if (saveUsers[indexUser].type === "basic") {
+        if (saveUsers[indexUser].type === "Basic") {
             alert("Account does not allow file sharing.");
             alert("");
             return;
@@ -133,7 +132,7 @@ class Cloud {
         }
 
         if (
-            saveUsers[indexShareUser].type === "basic" &&
+            saveUsers[indexShareUser].type === "Basic" &&
             saveUsers[indexShareUser].memory <
                 saveUsers[indexUser].files[fileName] / 2
         ) {
@@ -142,15 +141,19 @@ class Cloud {
             return;
         }
 
-        saveUsers[indexShareUser].filesShared[shareUser] = {};
-        saveUsers[indexShareUser].filesShared[shareUser][fileName] =
-            saveUsers[indexUser].files[fileName];
+        if (saveUsers[indexShareUser].filesShared[owner] === undefined) {
+            saveUsers[indexShareUser].filesShared[owner] = {};
+            saveUsers[indexShareUser].filesShared[owner][fileName] =
+                saveUsers[indexUser].files[fileName];
+        } else {
+            saveUsers[indexShareUser].filesShared[owner][fileName] =
+                saveUsers[indexUser].files[fileName];
+        }
 
-        if (saveUsers[indexShareUser].type === "basic") {
+        if (saveUsers[indexShareUser].type === "Basic") {
             saveUsers[indexShareUser].memory -=
                 saveUsers[indexUser].files[fileName] / 2;
         }
-
         alert("File was shared.");
         alert("");
     }
@@ -170,7 +173,6 @@ class Cloud {
                 account = saveUsers[i].email;
             }
         }
-
         alert(`Account with least free space: ${account}`);
         alert("");
     }
@@ -196,16 +198,20 @@ class Cloud {
             }
         };
         const alertShareFiles = () => {
-            const usersThatShared = Object.values(
+            const usersThatShared = Object.keys(
                 saveUsers[userIndex].filesShared
             );
-            debugger;
-            if (keys[0] === undefined) {
+            const entries = Object.entries(saveUsers[userIndex].filesShared);
+
+            if (usersThatShared[0] === undefined) {
                 return;
             }
 
-            for (let i = 0; i < keys.length; i++) {
-                alert(`${keys[i]} (${values[i]} MB) (shared)`);
+            for (let i = 0; i < usersThatShared.length; i++) {
+                let getFile = Object.entries(entries[i][1]);
+                for (let j = 0; j < getFile.length; j++) {
+                    alert(`${getFile[j][0]} (${getFile[j][1]} MB) (shared)`);
+                }
             }
         };
 
@@ -213,8 +219,8 @@ class Cloud {
         alertOwnFiles();
         alertShareFiles();
         alert("");
-        debugger;
     }
+
     listall() {
         if (saveUsers[0] === undefined) {
             return;
@@ -223,7 +229,9 @@ class Cloud {
         saveUsers.map((i) => alert(`${i.email} (${i.type})`));
         alert("");
     }
+
     update() {
+        debugger;
         const owner = saveCommand[1];
         const ownerIndex = findUserIndex(owner);
         const updateAccount = saveCommand[2];
@@ -239,10 +247,7 @@ class Cloud {
             return;
         }
 
-        if (
-            saveUsers[ownerIndex].files[file] === undefined &&
-            saveUsers[updateAccountIndex].files[file]
-        ) {
+        if (saveUsers[ownerIndex].files[file] === undefined) {
             alert("File does not exist.");
             alert("");
             return;
@@ -259,7 +264,14 @@ class Cloud {
 
         if (
             owner !== updateAccount &&
-            saveUsers[updateAccountIndex].filesShared[file]
+            saveUsers[updateAccountIndex].filesShared[owner] === undefined
+        ) {
+            alert("File not shared.");
+            alert("");
+            return;
+        } else if (
+            owner !== updateAccount &&
+            saveUsers[updateAccountIndex].filesShared[owner][file] === undefined
         ) {
             alert("File not shared.");
             alert("");
@@ -271,35 +283,35 @@ class Cloud {
         } else {
             saveUsers[ownerIndex].updates[file].unshift(updateAccount);
         }
-
-        alert("File was shared.");
+        alert("File was updated.");
         alert("");
     }
+
     lastupdate() {
         const account = saveCommand[1];
+        const indexAccount = findUserIndex(account);
         const file = saveCommand[2];
 
-        if (!findUserIndex(account)) {
+        if (indexAccount === undefined) {
             alert("Account does not exist.");
             alert("");
             return;
         }
 
-        if (saveUsers[account].files[file] === undefined) {
+        if (saveUsers[indexAccount].files[file] === undefined) {
             alert("File does not exist.");
             alert("");
             return;
         }
 
-        if (saveUsers[account].updates[file] === undefined) {
+        if (saveUsers[indexAccount].updates[file] === undefined) {
             alert(`Last update: ${account}`);
             alert("");
             return;
         }
 
-        alert(`Last update: ${saveUsers[account].updates[file][0]}`);
+        alert(`Last update: ${saveUsers[indexAccount].updates[file][0]}`);
         alert("");
-        debugger;
     }
 }
 const eddisCloud = new Cloud();
