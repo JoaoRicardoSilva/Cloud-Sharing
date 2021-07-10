@@ -40,6 +40,11 @@ const findUserIndex = (mail) => {
     }
 };
 
+const twoAlert = (str) => {
+    alert(str);
+    alert("");
+};
+
 //Cloud
 class Cloud {
     add() {
@@ -49,8 +54,8 @@ class Cloud {
         let newUser;
 
         if (typeof findUserIndex(email) === "number") {
-            alert("Account already exists.");
-            alert("");
+            twoAlert("Account already exists.");
+
             return;
         }
 
@@ -67,8 +72,7 @@ class Cloud {
         }
 
         saveUsers.push(newUser);
-        alert("Account was added.");
-        alert("");
+        twoAlert("Account was added.");
     }
     upload() {
         const email = saveCommand[1];
@@ -77,28 +81,26 @@ class Cloud {
         const index = findUserIndex(email);
 
         if (index === undefined) {
-            alert("Account does not exist.");
-            alert("");
+            twoAlert("Account does not exist.");
             return;
         }
 
         if (saveUsers[index].files[nameFile]) {
-            alert("File already exists in the account.");
-            alert("");
+            twoAlert("File already exists in the account.");
+
             return;
         }
 
         if (saveUsers[index].memory - size < 0) {
-            alert("File size exceeds account capacity.");
-            alert("");
+            twoAlert("File size exceeds account capacity.");
+
             return;
         }
         saveUsers[index].files[nameFile] = size;
 
         saveUsers[index].memory -= size;
 
-        alert("File uploaded into account.");
-        alert("");
+        twoAlert("File uploaded into account.");
     }
     share() {
         const owner = saveCommand[1];
@@ -108,26 +110,26 @@ class Cloud {
         const indexShareUser = findUserIndex(shareUser);
 
         if (indexUser === undefined || indexShareUser === undefined) {
-            alert("Account does not exist.");
-            alert("");
+            twoAlert("Account does not exist.");
+
             return;
         }
 
         if (!saveUsers[indexUser].files[fileName]) {
-            alert("File does not exist.");
-            alert("");
+            twoAlert("File does not exist.");
+
             return;
         }
 
         if (saveUsers[indexUser].type === "Basic") {
-            alert("Account does not allow file sharing.");
-            alert("");
+            twoAlert("Account does not allow file sharing.");
+
             return;
         }
 
         if (saveUsers[indexUser].filesShared[fileName]) {
-            alert("File already shared.");
-            alert("");
+            twoAlert("File already shared.");
+
             return;
         }
 
@@ -136,8 +138,8 @@ class Cloud {
             saveUsers[indexShareUser].memory <
                 saveUsers[indexUser].files[fileName] / 2
         ) {
-            alert("File size exceeds account capacity.");
-            alert("");
+            twoAlert("File size exceeds account capacity.");
+
             return;
         }
 
@@ -154,13 +156,13 @@ class Cloud {
             saveUsers[indexShareUser].memory -=
                 saveUsers[indexUser].files[fileName] / 2;
         }
-        alert("File was shared.");
-        alert("");
+        twoAlert("File was shared.");
     }
+
     minspace() {
         if (saveUsers[0] === undefined) {
-            alert("No accounts.");
-            alert("");
+            twoAlert("No accounts.");
+
             return;
         }
 
@@ -173,15 +175,15 @@ class Cloud {
                 account = saveUsers[i].email;
             }
         }
-        alert(`Account with least free space: ${account}`);
-        alert("");
+        twoAlert(`Account with least free space: ${account}`);
     }
+
     listfiles() {
         const userIndex = findUserIndex(saveCommand[1]);
 
         if (userIndex === undefined) {
-            alert("Account does not exist.");
-            alert("");
+            twoAlert("Account does not exist.");
+
             return;
         }
 
@@ -242,14 +244,14 @@ class Cloud {
             ownerIndex === undefined ||
             findUserIndex(updateAccount) === undefined
         ) {
-            alert("Account does not exist.");
-            alert("");
+            twoAlert("Account does not exist.");
+
             return;
         }
 
         if (saveUsers[ownerIndex].files[file] === undefined) {
-            alert("File does not exist.");
-            alert("");
+            twoAlert("File does not exist.");
+
             return;
         }
 
@@ -257,8 +259,8 @@ class Cloud {
             saveUsers[ownerIndex].files[file] === undefined &&
             saveUsers[updateAccountIndex].files[file] === undefined
         ) {
-            alert("File not shared.");
-            alert("");
+            twoAlert("File not shared.");
+
             return;
         }
 
@@ -266,16 +268,13 @@ class Cloud {
             owner !== updateAccount &&
             saveUsers[updateAccountIndex].filesShared[owner] === undefined
         ) {
-            alert("File not shared.");
-            alert("");
+            twoAlert("File not shared.");
+
             return;
         } else if (
             owner !== updateAccount &&
             saveUsers[updateAccountIndex].filesShared[owner][file] === undefined
         ) {
-            alert("File not shared.");
-            alert("");
-            return;
         }
 
         if (saveUsers[ownerIndex].updates[file] === undefined) {
@@ -283,8 +282,7 @@ class Cloud {
         } else {
             saveUsers[ownerIndex].updates[file].unshift(updateAccount);
         }
-        alert("File was updated.");
-        alert("");
+        twoAlert("File was updated.");
     }
 
     lastupdate() {
@@ -293,20 +291,20 @@ class Cloud {
         const file = saveCommand[2];
 
         if (indexAccount === undefined) {
-            alert("Account does not exist.");
-            alert("");
+            twoAlert("Account does not exist.");
+
             return;
         }
 
         if (saveUsers[indexAccount].files[file] === undefined) {
-            alert("File does not exist.");
-            alert("");
+            twoAlert("File does not exist.");
+
             return;
         }
 
         if (saveUsers[indexAccount].updates[file] === undefined) {
-            alert(`Last update: ${account}`);
-            alert("");
+            twoAlert(`Last update: ${account}`);
+
             return;
         }
 
@@ -332,8 +330,8 @@ const getCommand = () => {
 
     saveCommand[0] = saveCommand[0].toLowerCase();
     if (saveCommand[0] === "exit") {
-        alert("Exiting...");
-        alert("");
+        twoAlert("Exiting...");
+
         return false;
     }
 
